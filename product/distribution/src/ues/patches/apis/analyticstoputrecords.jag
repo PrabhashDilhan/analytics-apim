@@ -78,6 +78,7 @@
     var cacheTimeoutSeconds = 5;
     var loggedInUser = null;
     var tt = Packages.org.wso2.carbon.testjar.mgt.PutAnalyticsRecord;
+    var patternMatching  = Packages.org.wso2.carbon.patternMatching.api.ExceptionPatternMatching;
 
     response.contentType = CONTENT_TYPE_JSON;
 
@@ -98,7 +99,7 @@
     }
 
 
-    var connector = new tt();
+    var connector = new patternMatching();
 
     var type = 0;
     var typeParam = request.getParameter(TYPE);
@@ -151,6 +152,11 @@
             case TYPE_PUT_RECORDS:
              {
                  result = connector.put(loggedInUser,tableName,contentAsString);
+                 break;
+             }
+             case TYPE_SEARCH_COUNT:
+             {
+                 result = connector.exceptionPatternMatching(loggedInUser, tableName, contentAsString);
                  break;
              }
             default:
