@@ -61,10 +61,7 @@
     var cacheTimeoutSeconds = 5;
     var loggedInUser = null;
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 500a4b40cfc927d0e5626f2105a51cd691b46d4d
     if(configs.cacheTimeoutSeconds) {
         cacheTimeoutSeconds = parseInt(configs.cacheTimeoutSeconds);
     }

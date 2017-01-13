@@ -67,6 +67,7 @@
     var TYPE_REINDEX = 30;
     var TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES = 31;
     var TYPE_DRILLDOWN_RANGE_COUNT = 32;
+    var TYPE_HTTP_CLIENT = 33;
     var TYPE_PUT_RECORDS = 12;
     var log = new Log();
     var carbon = require('carbon');
@@ -78,7 +79,7 @@
     var cacheTimeoutSeconds = 5;
     var loggedInUser = null;
     var tt = Packages.org.wso2.carbon.testjar.mgt.PutAnalyticsRecord;
-    var patternMatching  = Packages.org.wso2.carbon.patternMatching.api.ExceptionPatternMatching;
+    var eventPublisher  = Packages.org.wso2.carbon.httpClient.EventPublisher;
 
     response.contentType = CONTENT_TYPE_JSON;
 
@@ -99,7 +100,7 @@
     }
 
 
-    var connector = new patternMatching();
+    var connector = new eventPublisher();
 
     var type = 0;
     var typeParam = request.getParameter(TYPE);
@@ -116,7 +117,7 @@
 
     var tableName = request.getParameter(TABLE_NAME);
     if (type != TYPE_LIST_TABLES &&
-        //        type != TYPE_PUT_RECORDS &&
+               type != TYPE_HTTP_CLIENT &&
         type != TYPE_PAGINATION_SUPPORTED &&
         type != TYPE_ADD_STREAM_DEFINITION &&
         type != TYPE_GET_STREAM_DEFINITION &&
@@ -154,9 +155,9 @@
                  result = connector.put(loggedInUser,tableName,contentAsString);
                  break;
              }
-             case TYPE_SEARCH_COUNT:
+             case TYPE_HTTP_CLIENT:
              {
-                 result = connector.exceptionPatternMatching(loggedInUser, tableName, contentAsString);
+                 result = connector.publishEvents(contentAsString);
                  break;
              }
             default:
