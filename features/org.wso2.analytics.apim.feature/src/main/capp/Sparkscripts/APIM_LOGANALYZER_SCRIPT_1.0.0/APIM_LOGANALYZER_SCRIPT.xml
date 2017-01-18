@@ -467,7 +467,7 @@
         CREATE TEMPORARY TABLE vertex_rdd USING CarbonAnalytics
         OPTIONS (
         tableName "VERTEX_RDD",
-        schema "vertex string -i"
+        schema "vertex string -i",
         primaryKeys "vertex");
 
 
