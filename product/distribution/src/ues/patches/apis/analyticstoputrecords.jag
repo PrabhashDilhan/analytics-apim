@@ -80,7 +80,7 @@
     var loggedInUser = null;
     var tt = Packages.org.wso2.carbon.testjar.mgt.PutAnalyticsRecord;
     var eventPublisher  = Packages.org.wso2.carbon.httpClient.EventPublisher;
-    var rdds = Packages.org.wso2.carbon.graphx.FirstGraph;
+    var rdds = Packages.graphframe.FirstGraph;
 
     response.contentType = CONTENT_TYPE_JSON;
 
@@ -95,13 +95,12 @@
         } else {
             log.error("user is not authenticated!");
             response.status = HTTP_USER_NOT_AUTHENTICATED;
-            print('{ "status": "Failed", "message": "User is not authenticated." }');
+            print('{ "status": "Failed", "message": "User is not authentggggicated." }');
             return;
         }
     }
 
-
-    var connector = new eventPublisher();
+    var connector = new tt();
     var test = new rdds();
 
     var type = 0;
@@ -119,7 +118,7 @@
 
     var tableName = request.getParameter(TABLE_NAME);
     if (type != TYPE_LIST_TABLES &&
-               type != TYPE_HTTP_CLIENT &&
+        //        type != TYPE_PUT_RECORDS &&
         type != TYPE_PAGINATION_SUPPORTED &&
         type != TYPE_ADD_STREAM_DEFINITION &&
         type != TYPE_GET_STREAM_DEFINITION &&
@@ -148,8 +147,10 @@
         switch (type) {
             case TYPE_LIST_TABLES:
             {
-
-                result = test.getRdds();
+                log.error("dfrewwetew");
+                result = test.getTableLis();
+                log.error("dfasdfdsaf");
+                return;
                 break;
 
             }
