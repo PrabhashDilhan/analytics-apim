@@ -1,0 +1,16 @@
+{
+  "name": "pattern_matchin_stream",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "INT"
+    },
+    {
+      "name": "pattern",
+      "type": "STRING"
+    }
+  ]
+}

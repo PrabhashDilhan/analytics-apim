@@ -1,0 +1,16 @@
+{
+  "name": "exceptions_pattern",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "solution_id",
+      "type": "STRING"
+    },
+    {
+      "name": "exception_pattern",
+      "type": "STRING"
+    }
+  ]
+}
