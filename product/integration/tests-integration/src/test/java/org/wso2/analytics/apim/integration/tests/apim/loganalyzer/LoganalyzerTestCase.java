@@ -39,29 +39,35 @@ import java.util.Map;
 
 public class LoganalyzerTestCase extends APIMAnalyticsBaseTestCase {
     private static final Log log = LogFactory.getLog(AbnormalRequestCountTestCase.class);
-    private DataPublisherClient dataPublisherClient;
     private static final String STREAM_NAME = "loganalyzer";
     private static final String STREAM_VERSION = "1.0.0";
     private static final String TEST_RESOURCE_PATH = "logAnalyzerArtifacts";
     private static final String SPARK_SCRIPT = "APIM_LOGANALYZER_SCRIPT";
-    private static final String LOGANALYZER_MESSAGE_LEVEL_ERROR_DAILY = "LOGANALYZER_MESSAGE_LEVEL_ERROR_DAILY";
-    private static final String LOGANALYZER_MESSAGE_LEVEL_ERROR_WEEKLY = "LOGANALYZER_MESSAGE_LEVEL_ERROR_WEEKLY";
-    private static final String LOGANALYZER_MESSAGE_LEVEL_ERROR_MONTHLY = "LOGANALYZER_MESSAGE_LEVEL_ERROR_MONTHLY";
-    private static final String LOGANALYZER_CLASS_LEVEL_ERROR_DAILY = "LOGANALYZER_CLASS_LEVEL_ERROR_DAILY";
-    private static final String LOGANALYZER_CLASS_LEVEL_ERROR_WEEKLY = "LOGANALYZER_CLASS_LEVEL_ERROR_WEEKLY";
-    private static final String LOGANALYZER_CLASS_LEVEL_ERROR_MONTHLY = "LOGANALYZER_CLASS_LEVEL_ERROR_MONTHLY";
-    private static final String LOGANALYZER_APIM_ARTIFACT_DEPLOYED_DAILY = "LOGANALYZER_APIM_ARTIFACT_DEPLOYED_DAILY";
-    private static final String LOGANALYZER_APIM_ARTIFACT_DELETED_DAILY = "LOGANALYZER_APIM_ARTIFACT_DELETED_DAILY";
-    private static final String LOGANALYZER_APIM_MESSAGE_PROCESSING_DAILY = "LOGANALYZER_APIM_MESSAGE_PROCESSING_DAILY";
-    private static final String LOGANALYZER_APIM_MESSAGE_PROCESSING_WEEKLY = "LOGANALYZER_APIM_MESSAGE_PROCESSING_WEEKLY";
-    private static final String LOGANALYZER_APIM_MESSAGE_PROCESSING_MONTHLY = "LOGANALYZER_APIM_MESSAGE_PROCESSING_MONTHLY";
-    private static final String LOGANALYZER_APIKEY_STATUS = "LOGANALYZER_APIKEY_STATUS";
-    private static final String LOGANALYZER_INVALID_LOGIN_ATTEMPT_DAILY = "LOGANALYZER_INVALID_LOGIN_ATTEMPT_DAILY";
-    private static final String LOGANALYZER_INVALID_LOGIN_ATTEMPT_WEEKLY = "LOGANALYZER_INVALID_LOGIN_ATTEMPT_WEEKLY";
-    private static final String LOGANALYZER_INVALID_LOGIN_ATTEMPT_MONTHLY = "LOGANALYZER_INVALID_LOGIN_ATTEMPT_MONTHLY";
-    private static final String LOGANALYZER_AUDIT_LOG = "LOGANALYZER_APIM_AUDIT_LOG";
-    private static final String[] columns = {"serverName", "appName", "eventTimeStamp", "class", "level", "content", "ip",
-            "instance", "trace"};
+    private static final String MESSAGE_LEVEL_ERROR_DAILY_TABLE = "LOGANALYZER_MESSAGE_LEVEL_ERROR_DAILY";
+    private static final String MESSAGE_LEVEL_ERROR_WEEKLY_TABLE = "LOGANALYZER_MESSAGE_LEVEL_ERROR_WEEKLY";
+    private static final String MESSAGE_LEVEL_ERROR_MONTHLY_TABLE = "LOGANALYZER_MESSAGE_LEVEL_ERROR_MONTHLY";
+    private static final String CLASS_LEVEL_ERROR_DAILY_TABLE = "LOGANALYZER_CLASS_LEVEL_ERROR_DAILY";
+    private static final String CLASS_LEVEL_ERROR_WEEKLY_TABLE = "LOGANALYZER_CLASS_LEVEL_ERROR_WEEKLY";
+    private static final String CLASS_LEVEL_ERROR_MONTHLY_TABLE = "LOGANALYZER_CLASS_LEVEL_ERROR_MONTHLY";
+    private static final String APIM_ARTIFACT_DEPLOYED_DAILY_TABLE = "LOGANALYZER_APIM_ARTIFACT_DEPLOYED_DAILY";
+    private static final String APIM_ARTIFACT_DELETED_DAILY_TABLE = "LOGANALYZER_APIM_ARTIFACT_DELETED_DAILY";
+    private static final String APIM_MESSAGE_PROCESSING_DAILY_TABLE = "LOGANALYZER_APIM_MESSAGE_PROCESSING_DAILY";
+    private static final String APIM_MESSAGE_PROCESSING_WEEKLY_TABLE = "LOGANALYZER_APIM_MESSAGE_PROCESSING_WEEKLY";
+    private static final String APIM_MESSAGE_PROCESSING_MONTHLY_TABLE = "LOGANALYZER_APIM_MESSAGE_PROCESSING_MONTHLY";
+    private static final String APIKEY_STATUS_TABLE = "LOGANALYZER_APIKEY_STATUS";
+    private static final String INVALID_LOGIN_ATTEMPT_DAILY_TABLE = "LOGANALYZER_INVALID_LOGIN_ATTEMPT_DAILY";
+    private static final String INVALID_LOGIN_ATTEMPT_WEEKLY_TABLE = "LOGANALYZER_INVALID_LOGIN_ATTEMPT_WEEKLY";
+    private static final String INVALID_LOGIN_ATTEMPT_MONTHLY_TABLE = "LOGANALYZER_INVALID_LOGIN_ATTEMPT_MONTHLY";
+    private static final String AUDIT_LOG_TABLE = "LOGANALYZER_APIM_AUDIT_LOG";
+    private static final String SERVER_NAME = "serverName";
+    private static final String APP_NAME = "appName";
+    private static final String EVENT_TIMESTAMP = "eventTimeStamp";
+    private static final String CLASS = "class";
+    private static final String LEVEL = "level";
+    private static final String CONTENT = "content";
+    private static final String IP = "ip";
+    private static final String INSTANCE = "instance";
+    private static final String TRACE = "trace";
     private final int MAX_TRIES = 20;
 
     @BeforeClass(alwaysRun = true)
@@ -78,13 +84,13 @@ public class LoganalyzerTestCase extends APIMAnalyticsBaseTestCase {
     }
 
     @Test(groups = "wso2.analytics.apim", description = "Tests if the Spark script is deployed")
-    public void testLoganalyzerSparkScriptDeployment() throws Exception {
-        Assert.assertTrue(isSparkScriptExists(SPARK_SCRIPT), "APIM_LOGANALYZER_SCRIPT spark script is not deployed!");
+    public void testLogAnalyzerSparkScriptDeployment() throws Exception {
+        Assert.assertTrue(isSparkScriptExists(SPARK_SCRIPT), SPARK_SCRIPT + " spark script is not deployed!");
     }
 
     @Test(groups = "wso2.analytics.apim", description = "Test if the Simulation data has been published"
-            , dependsOnMethods = "testLoganalyzerSparkScriptDeployment")
-    public void testLoganalyzerDataSent() throws Exception {
+            , dependsOnMethods = "testLogAnalyzerSparkScriptDeployment")
+    public void testLogAnalyzerDataSent() throws Exception {
 
         //publish events
         publishEvent(TEST_RESOURCE_PATH, "wso2carbonBenchmarkLogs.csv", getStreamId(STREAM_NAME, STREAM_VERSION));
@@ -107,127 +113,140 @@ public class LoganalyzerTestCase extends APIMAnalyticsBaseTestCase {
     }
 
     @Test(groups = "wso2.analytics.apim", description = "Test APIM_LOGANALYZER_SCRIPT Spark Script execution"
-            , dependsOnMethods = "testLoganalyzerDataSent")
+            , dependsOnMethods = "testLogAnalyzerDataSent")
     public void testLoganalyzerSparkScriptExecution() throws Exception {
         //run the script
         executeSparkScript(SPARK_SCRIPT);
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_MESSAGE_LEVEL_ERROR_DAILY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_MESSAGE_LEVEL_ERROR_DAILY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_MESSAGE_LEVEL_ERROR_WEEKLY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_MESSAGE_LEVEL_ERROR_WEEKLY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_MESSAGE_LEVEL_ERROR_MONTHLY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_MESSAGE_LEVEL_ERROR_MONTHLY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_CLASS_LEVEL_ERROR_DAILY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_CLASS_LEVEL_ERROR_DAILY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_CLASS_LEVEL_ERROR_WEEKLY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_CLASS_LEVEL_ERROR_WEEKLY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_CLASS_LEVEL_ERROR_MONTHLY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_CLASS_LEVEL_ERROR_MONTHLY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_APIM_ARTIFACT_DEPLOYED_DAILY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_APIM_ARTIFACT_DEPLOYED_DAILY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_APIM_ARTIFACT_DELETED_DAILY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_APIM_ARTIFACT_DELETED_DAILY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_APIM_MESSAGE_PROCESSING_DAILY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_APIM_MESSAGE_PROCESSING_DAILY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_APIM_MESSAGE_PROCESSING_WEEKLY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_APIM_MESSAGE_PROCESSING_WEEKLY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_APIM_MESSAGE_PROCESSING_MONTHLY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_APIM_MESSAGE_PROCESSING_MONTHLY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_INVALID_LOGIN_ATTEMPT_DAILY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_INVALID_LOGIN_ATTEMPT_DAILY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_INVALID_LOGIN_ATTEMPT_WEEKLY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_INVALID_LOGIN_ATTEMPT_WEEKLY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_INVALID_LOGIN_ATTEMPT_MONTHLY, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_INVALID_LOGIN_ATTEMPT_MONTHLY + "!");
-        Assert.assertTrue(isRecordExists(-1234, LOGANALYZER_AUDIT_LOG, MAX_TRIES),
-                "Spark script did not execute as expected, No entries found for table " + LOGANALYZER_AUDIT_LOG + "!");
+        Assert.assertTrue(isRecordExists(-1234, MESSAGE_LEVEL_ERROR_DAILY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        MESSAGE_LEVEL_ERROR_DAILY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, MESSAGE_LEVEL_ERROR_WEEKLY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        MESSAGE_LEVEL_ERROR_WEEKLY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, MESSAGE_LEVEL_ERROR_MONTHLY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        MESSAGE_LEVEL_ERROR_MONTHLY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, CLASS_LEVEL_ERROR_DAILY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        CLASS_LEVEL_ERROR_DAILY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, CLASS_LEVEL_ERROR_WEEKLY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        CLASS_LEVEL_ERROR_WEEKLY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, CLASS_LEVEL_ERROR_MONTHLY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        CLASS_LEVEL_ERROR_MONTHLY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, APIM_ARTIFACT_DEPLOYED_DAILY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        APIM_ARTIFACT_DEPLOYED_DAILY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, APIM_ARTIFACT_DELETED_DAILY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        APIM_ARTIFACT_DELETED_DAILY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, APIM_MESSAGE_PROCESSING_DAILY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        APIM_MESSAGE_PROCESSING_DAILY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, APIM_MESSAGE_PROCESSING_WEEKLY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        APIM_MESSAGE_PROCESSING_WEEKLY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, APIM_MESSAGE_PROCESSING_MONTHLY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        APIM_MESSAGE_PROCESSING_MONTHLY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, INVALID_LOGIN_ATTEMPT_DAILY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        INVALID_LOGIN_ATTEMPT_DAILY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, INVALID_LOGIN_ATTEMPT_WEEKLY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        INVALID_LOGIN_ATTEMPT_WEEKLY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, INVALID_LOGIN_ATTEMPT_MONTHLY_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " +
+                        INVALID_LOGIN_ATTEMPT_MONTHLY_TABLE + "!");
+        Assert.assertTrue(isRecordExists(-1234, AUDIT_LOG_TABLE, MAX_TRIES),
+                "Spark script did not execute as expected, No entries found for table " + AUDIT_LOG_TABLE + "!");
     }
 
-    public void dataPurging() throws Exception {
+    private void dataPurging() throws Exception {
         if (isTableExist(-1234, STREAM_NAME.toUpperCase())) {
             deleteData(-1234, STREAM_NAME.toUpperCase());
         }
-        if (isTableExist(-1234, LOGANALYZER_MESSAGE_LEVEL_ERROR_DAILY)) {
-            deleteData(-1234, LOGANALYZER_MESSAGE_LEVEL_ERROR_DAILY);
+        if (isTableExist(-1234, MESSAGE_LEVEL_ERROR_DAILY_TABLE)) {
+            deleteData(-1234, MESSAGE_LEVEL_ERROR_DAILY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_MESSAGE_LEVEL_ERROR_WEEKLY)) {
-            deleteData(-1234, LOGANALYZER_MESSAGE_LEVEL_ERROR_WEEKLY);
+        if (isTableExist(-1234, MESSAGE_LEVEL_ERROR_WEEKLY_TABLE)) {
+            deleteData(-1234, MESSAGE_LEVEL_ERROR_WEEKLY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_MESSAGE_LEVEL_ERROR_MONTHLY)) {
-            deleteData(-1234, LOGANALYZER_MESSAGE_LEVEL_ERROR_MONTHLY);
+        if (isTableExist(-1234, MESSAGE_LEVEL_ERROR_MONTHLY_TABLE)) {
+            deleteData(-1234, MESSAGE_LEVEL_ERROR_MONTHLY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_CLASS_LEVEL_ERROR_DAILY)) {
-            deleteData(-1234, LOGANALYZER_CLASS_LEVEL_ERROR_DAILY);
+        if (isTableExist(-1234, CLASS_LEVEL_ERROR_DAILY_TABLE)) {
+            deleteData(-1234, CLASS_LEVEL_ERROR_DAILY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_CLASS_LEVEL_ERROR_WEEKLY)) {
-            deleteData(-1234, LOGANALYZER_CLASS_LEVEL_ERROR_WEEKLY);
+        if (isTableExist(-1234, CLASS_LEVEL_ERROR_WEEKLY_TABLE)) {
+            deleteData(-1234, CLASS_LEVEL_ERROR_WEEKLY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_CLASS_LEVEL_ERROR_MONTHLY)) {
-            deleteData(-1234, LOGANALYZER_CLASS_LEVEL_ERROR_MONTHLY);
+        if (isTableExist(-1234, CLASS_LEVEL_ERROR_MONTHLY_TABLE)) {
+            deleteData(-1234, CLASS_LEVEL_ERROR_MONTHLY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_APIM_ARTIFACT_DEPLOYED_DAILY)) {
-            deleteData(-1234, LOGANALYZER_APIM_ARTIFACT_DEPLOYED_DAILY);
+        if (isTableExist(-1234, APIM_ARTIFACT_DEPLOYED_DAILY_TABLE)) {
+            deleteData(-1234, APIM_ARTIFACT_DEPLOYED_DAILY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_APIM_ARTIFACT_DELETED_DAILY)) {
-            deleteData(-1234, LOGANALYZER_APIM_ARTIFACT_DELETED_DAILY);
+        if (isTableExist(-1234, APIM_ARTIFACT_DELETED_DAILY_TABLE)) {
+            deleteData(-1234, APIM_ARTIFACT_DELETED_DAILY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_APIM_MESSAGE_PROCESSING_DAILY)) {
-            deleteData(-1234, LOGANALYZER_APIM_MESSAGE_PROCESSING_DAILY);
+        if (isTableExist(-1234, APIM_MESSAGE_PROCESSING_DAILY_TABLE)) {
+            deleteData(-1234, APIM_MESSAGE_PROCESSING_DAILY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_APIM_MESSAGE_PROCESSING_WEEKLY)) {
-            deleteData(-1234, LOGANALYZER_APIM_MESSAGE_PROCESSING_WEEKLY);
+        if (isTableExist(-1234, APIM_MESSAGE_PROCESSING_WEEKLY_TABLE)) {
+            deleteData(-1234, APIM_MESSAGE_PROCESSING_WEEKLY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_APIM_MESSAGE_PROCESSING_MONTHLY)) {
-            deleteData(-1234, LOGANALYZER_APIM_MESSAGE_PROCESSING_MONTHLY);
+        if (isTableExist(-1234, APIM_MESSAGE_PROCESSING_MONTHLY_TABLE)) {
+            deleteData(-1234, APIM_MESSAGE_PROCESSING_MONTHLY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_APIKEY_STATUS)) {
-            deleteData(-1234, LOGANALYZER_APIKEY_STATUS);
+        if (isTableExist(-1234, APIKEY_STATUS_TABLE)) {
+            deleteData(-1234, APIKEY_STATUS_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_INVALID_LOGIN_ATTEMPT_DAILY)) {
-            deleteData(-1234, LOGANALYZER_INVALID_LOGIN_ATTEMPT_DAILY);
+        if (isTableExist(-1234, INVALID_LOGIN_ATTEMPT_DAILY_TABLE)) {
+            deleteData(-1234, INVALID_LOGIN_ATTEMPT_DAILY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_INVALID_LOGIN_ATTEMPT_WEEKLY)) {
-            deleteData(-1234, LOGANALYZER_INVALID_LOGIN_ATTEMPT_WEEKLY);
+        if (isTableExist(-1234, INVALID_LOGIN_ATTEMPT_WEEKLY_TABLE)) {
+            deleteData(-1234, INVALID_LOGIN_ATTEMPT_WEEKLY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_INVALID_LOGIN_ATTEMPT_MONTHLY)) {
-            deleteData(-1234, LOGANALYZER_INVALID_LOGIN_ATTEMPT_MONTHLY);
+        if (isTableExist(-1234, INVALID_LOGIN_ATTEMPT_MONTHLY_TABLE)) {
+            deleteData(-1234, INVALID_LOGIN_ATTEMPT_MONTHLY_TABLE);
         }
-        if (isTableExist(-1234, LOGANALYZER_AUDIT_LOG)) {
-            deleteData(-1234, LOGANALYZER_AUDIT_LOG);
+        if (isTableExist(-1234, AUDIT_LOG_TABLE)) {
+            deleteData(-1234, AUDIT_LOG_TABLE);
         }
     }
 
     private void publishEvent(String testResourcePath, String resourceName, String streamId) throws Exception {
         List<Event> eventListFromCSV = getEventListFromCSV(getFilePath(testResourcePath, resourceName), streamId);
-        dataPublisherClient = new DataPublisherClient();
+        DataPublisherClient dataPublisherClient = new DataPublisherClient();
         dataPublisherClient.publish(STREAM_NAME, STREAM_VERSION, eventListFromCSV);
         Thread.sleep(10000);
         dataPublisherClient.shutdown();
     }
 
-    public List<Event> getEventListFromCSV(String file, String streamId) throws IOException {
-        String line = "";
+    private List<Event> getEventListFromCSV(String file, String streamId) throws IOException {
+        String line;
         String cvsSplitBy = ",";
         List<Event> eventDataToList = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             while ((line = br.readLine()) != null) {
                 // use comma as separator
                 String[] eventArray = line.split(cvsSplitBy, -1);
-                Map<String, String> arbitraryDataMap = new HashMap<String, String>();
-                arbitraryDataMap.put(columns[0], eventArray[1]);//serverName
-                arbitraryDataMap.put(columns[1], eventArray[2]);//appName
-                arbitraryDataMap.put(columns[2], eventArray[3]);//eventTimeStamp
-                arbitraryDataMap.put(columns[3], eventArray[4]);//class
-                arbitraryDataMap.put(columns[4], eventArray[5]);//level
-                arbitraryDataMap.put(columns[5], eventArray[6]);//content
-                arbitraryDataMap.put(columns[6], eventArray[7]);//ip
-                arbitraryDataMap.put(columns[7], eventArray[8]);//instance
-                arbitraryDataMap.put(columns[8], eventArray[9]);//trace
-                Event laEvent = new Event(streamId, System.currentTimeMillis(), null, null, new String[]{eventArray[0]}, arbitraryDataMap);
-                eventDataToList.add(laEvent);
+                Map<String, String> arbitraryDataMap = new HashMap<>();
+                arbitraryDataMap.put(SERVER_NAME, eventArray[1]);
+                arbitraryDataMap.put(APP_NAME, eventArray[2]);
+                arbitraryDataMap.put(EVENT_TIMESTAMP, eventArray[3]);
+                arbitraryDataMap.put(CLASS, eventArray[4]);
+                arbitraryDataMap.put(LEVEL, eventArray[5]);
+                arbitraryDataMap.put(CONTENT, eventArray[6]);
+                arbitraryDataMap.put(IP, eventArray[7]);
+                arbitraryDataMap.put(INSTANCE, eventArray[8]);
+                arbitraryDataMap.put(TRACE, eventArray[9]);
+                Event event = new Event(streamId, System.currentTimeMillis(), null, null, new String[]{eventArray[0]},
+                        arbitraryDataMap);
+                eventDataToList.add(event);
             }
-        } catch (Exception e) {
-            throw e;
         }
         return eventDataToList;
     }
