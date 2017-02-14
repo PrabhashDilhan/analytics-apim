@@ -1,0 +1,16 @@
+{
+  "name": "exception_message_table",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "INT"
+    },
+    {
+      "name": "message",
+      "type": "STRING"
+    }
+  ]
+}

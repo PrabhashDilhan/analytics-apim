@@ -1,0 +1,16 @@
+{
+  "name": "exception_class_names",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "id",
+      "type": "INT"
+    },
+    {
+      "name": "class_name",
+      "type": "STRING"
+    }
+  ]
+}

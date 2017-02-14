@@ -1,0 +1,16 @@
+{
+  "name": "outSteams",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "results",
+      "type": "BOOL"
+    },
+    {
+      "name": "pattern",
+      "type": "STRING"
+    }
+  ]
+}

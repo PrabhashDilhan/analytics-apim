@@ -1,0 +1,32 @@
+{
+  "name": "solutions",
+  "version": "1.0.0",
+  "nickName": "",
+  "description": "",
+  "payloadData": [
+    {
+      "name": "solution_id",
+      "type": "STRING"
+    },
+    {
+      "name": "solution",
+      "type": "STRING"
+    },
+    {
+      "name": "reason",
+      "type": "STRING"
+    },
+    {
+      "name": "rank",
+      "type": "LONG"
+    },
+    {
+      "name": "isdeleted",
+      "type": "BOOL"
+    },
+    {
+      "name": "rankedtime",
+      "type": "LONG"
+    }
+  ]
+}

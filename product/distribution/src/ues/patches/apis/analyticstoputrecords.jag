@@ -67,6 +67,7 @@
     var TYPE_REINDEX = 30;
     var TYPE_SEARCH_MULTI_TABLES_WITH_AGGREGATES = 31;
     var TYPE_DRILLDOWN_RANGE_COUNT = 32;
+    var TYPE_HTTP_CLIENT = 33;
     var TYPE_PUT_RECORDS = 12;
     var log = new Log();
     var carbon = require('carbon');
@@ -78,7 +79,8 @@
     var cacheTimeoutSeconds = 5;
     var loggedInUser = null;
     var tt = Packages.org.wso2.carbon.testjar.mgt.PutAnalyticsRecord;
-    var patternMatching  = Packages.org.wso2.carbon.patternMatching.api.ExceptionPatternMatching;
+    var eventPublisher  = Packages.org.wso2.carbon.httpClient.EventPublisher;
+    var rdds = Packages.graphframe.FirstGraph;
 
     response.contentType = CONTENT_TYPE_JSON;
 
@@ -93,13 +95,13 @@
         } else {
             log.error("user is not authenticated!");
             response.status = HTTP_USER_NOT_AUTHENTICATED;
-            print('{ "status": "Failed", "message": "User is not authenticated." }');
+            print('{ "status": "Failed", "message": "User is not authentggggicated." }');
             return;
         }
     }
 
-
-    var connector = new patternMatching();
+    var connector = new tt();
+    var test = new rdds();
 
     var type = 0;
     var typeParam = request.getParameter(TYPE);
@@ -145,8 +147,12 @@
         switch (type) {
             case TYPE_LIST_TABLES:
             {
-                result = connector.getTableLis(loggedInUser);
+                log.error("dfrewwetew");
+                result = test.getTableLis();
+                log.error("dfasdfdsaf");
+                return;
                 break;
+
             }
 
             case TYPE_PUT_RECORDS:
@@ -154,9 +160,9 @@
                  result = connector.put(loggedInUser,tableName,contentAsString);
                  break;
              }
-             case TYPE_SEARCH_COUNT:
+             case TYPE_HTTP_CLIENT:
              {
-                 result = connector.exceptionPatternMatching(loggedInUser, tableName, contentAsString);
+                 result = connector.publishEvents(contentAsString);
                  break;
              }
             default:

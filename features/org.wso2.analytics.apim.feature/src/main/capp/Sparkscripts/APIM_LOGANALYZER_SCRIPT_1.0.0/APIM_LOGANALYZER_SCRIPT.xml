@@ -457,6 +457,44 @@
         FROM CopyOfLoganalyzer
         WHERE _class = 'AUDIT_LOG' AND _content LIKE "%performedBy%"
         ORDER BY _eventTimeStamp;
+
+        CREATE TEMPORARY TABLE CopyOfExceptionPatterns USING CarbonAnalytics
+        OPTIONS (
+        tableName "EXCEPTIONS_PATTERNS",
+        schema "exception_pattern string -i, solution_id string -i",
+        primaryKeys "exception_pattern");
+
+        CREATE TEMPORARY TABLE vertex_rdd USING CarbonAnalytics
+        OPTIONS (
+        tableName "VERTEX_RDD",
+        schema "vertex string -i",
+        primaryKeys "vertex");
+
+
+        INSERT OVERWRITE table vertex_rdd
+        SELECT
+        explode(split(solution_id, '-')) AS vertex
+        FROM CopyOfExceptionPatterns
+        ORDER BY vertex;
+
+
+        CREATE TEMPORARY TABLE edge_rdd USING CarbonAnalytics
+        OPTIONS (
+        tableName "EDGE_RDD",
+        schema "source string -i, destination string -i"
+        );
+
+        INSERT OVERWRITE table edge_rdd
+        SELECT
+        split(temp.part,',')[0] AS sourse,
+        split(temp.part,',')[1] AS destination
+        FROM(
+        SELECT explode(split(temp1.pattern, '-')) AS part
+        FROM(
+        SELECT splitPattern(solution_id) AS pattern
+        FROM CopyOfExceptionPatterns
+        )temp1
+        )temp
     </Script>
     <CronExpression>0 0/15 * 1/1 * ? *</CronExpression>
 
