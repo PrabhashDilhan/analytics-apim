@@ -38,7 +38,12 @@
         <dependency artifact="org_wso2_analytics_apim_stateStream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="org_wso2_identity_oauth_token_issuance" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="org_wso2_loganalyzer_apim_logEventStream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
-
+        <dependency artifact="outSteams" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="pattern_matchin_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="exceptions_pattern" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="exception_message_table" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="exception_message_table" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="exceptions_pattern" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
         <!-- receivers -->
         <dependency artifact="org_wso2_analytics_apim_responseStatStreamReceiver" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
