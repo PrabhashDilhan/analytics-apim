@@ -1,0 +1,25 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('Sub_String_Matching_for_log_analyzer')
+
+/* Enter a unique description for ExecutionPlan */
+@Plan:description('exception pattern substring matching for wso2 log analyzer')
+
+/* define streams/tables and write queries here ... */
+
+@Plan:trace('false')
+
+
+@Import('pattern_matchin_stream:1.0.0')
+define stream pattern_matchin_stream (id int, pattern string);
+
+@Export('outSteams:1.0.0')
+define stream outSteams (results bool, pattern string);
+
+@from(eventtable = 'analytics.table', table.name = 'EXCEPTIONS_PATTERNS', primary.keys = 'exception_pattern, solution_id', indices = 'exception_pattern, solution_id')
+define table Finall(exception_pattern string, solution_id string);
+
+from pattern_matchin_stream join Finall
+--select true as results
+select regex:find(Finall.exception_pattern, pattern_matchin_stream.pattern) as results,
+		exception_pattern as pattern
+insert into outSteams;

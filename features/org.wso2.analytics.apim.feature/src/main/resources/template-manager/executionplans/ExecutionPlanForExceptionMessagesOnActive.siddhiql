@@ -1,0 +1,71 @@
+/* Enter a unique ExecutionPlan */
+@Plan:name('ExecutionPlanForExceptionMessagesOnActive')
+
+/* Enter a unique description for ExecutionPlan */
+@Plan:description('Fetch Exception Class Messages From Loganalyzer Currently Working')
+
+/* define streams/tables and write queries here ... */
+
+@Plan:trace('false')
+
+@Import('loganalyzer:1.0.0', arbitrary.data='true')
+define stream Loganalyzer (tenantID string, arbitraryDataMap Object);
+
+
+@Export('exception_message_table:1.0.0')
+define stream uniqueMessages (id int, message string);
+
+@from(eventtable = 'analytics.table', table.name = 'EXCEPTION_MESSAGE_TABLE', primary.keys = 'id', indices = 'id, message')
+define table Finall(id int, message string);
+
+define trigger trig at every 1 sec;
+define table indexTable (key string, id int);
+define table classTable ( className string);
+
+--set one at the start 
+from trig join Finall
+select
+	id as id,
+	message as message
+insert into Final;
+
+from trig
+select
+	'key' as key,
+	1 as id
+insert into indexTable;
+
+from Loganalyzer
+select cast(map:get(arbitraryDataMap , 'content') , 'string') as className,cast(map:get(arbitraryDataMap , 'level') , 'string') as level
+insert into ClassNameStream;
+
+from ClassNameStream[level == 'ERROR' or level == 'WARN']
+insert into ErrorClassNameStream;
+
+from Final
+select message as className
+insert into classTable;
+
+from ErrorClassNameStream[not(classTable.className == className in classTable)]
+select 
+	className
+insert into DistinctClassNameStream;
+
+from Final 
+select 
+	'key' as key,
+	max(id) as id
+insert overwrite indexTable
+on key == indexTable.key;
+
+from DistinctClassNameStream join indexTable
+select 
+	max(id) as id,
+	className
+insert into IndexedClassNameStream;
+
+from IndexedClassNameStream
+select 
+	id+1 as id,
+	className as message
+insert into uniqueMessages;
