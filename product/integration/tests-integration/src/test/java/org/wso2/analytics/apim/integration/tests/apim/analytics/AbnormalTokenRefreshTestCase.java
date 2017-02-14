@@ -87,7 +87,6 @@ public class AbnormalTokenRefreshTestCase extends APIMAnalyticsBaseTestCase {
         }
         if (isTableExist(-1234, LAST_ACCESS_TOKEN_REFRESH_TABLE)) {
             deleteData(-1234, LAST_ACCESS_TOKEN_REFRESH_TABLE);
-
         }
         // undeploy the publishers
         undeployPublisher(PUBLISHER_FILE);
@@ -96,6 +95,12 @@ public class AbnormalTokenRefreshTestCase extends APIMAnalyticsBaseTestCase {
     @Test(groups = "wso2.analytics.apim", description = "Tests if the Spark script is deployed")
     public void testSparkScriptDeployment() throws Exception {
         Assert.assertTrue(isSparkScriptExists(SPARK_SCRIPT), "Abnormal Token Refresh Alert spark script is not deployed!");
+    }
+
+    @Test(groups = "wso2.analytics.apim", description = "Test whether the Spark Script is scheduled",
+            dependsOnMethods = "testSparkScriptDeployment")
+    public void testSparkScriptScheduled() throws Exception {
+        Assert.assertTrue(isSparkScriptScheduled(SPARK_SCRIPT), SPARK_SCRIPT + " spark script is not scheduled!");
     }
 
     @Test(groups = "wso2.analytics.apim", description = "Test if the Simulation data has been published"
