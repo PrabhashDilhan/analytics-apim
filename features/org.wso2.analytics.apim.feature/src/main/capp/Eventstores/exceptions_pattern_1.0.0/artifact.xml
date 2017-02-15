@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<artifact name="exceptions_pattern" version="1.0.0" type="analytics/eventstore" serverRole="DataAnalyticsServer">
+<artifact name="exceptions_pattern_store" version="1.0.0" type="analytics/eventstore" serverRole="DataAnalyticsServer">
     <file>exceptions_pattern.xml</file>
 </artifact>

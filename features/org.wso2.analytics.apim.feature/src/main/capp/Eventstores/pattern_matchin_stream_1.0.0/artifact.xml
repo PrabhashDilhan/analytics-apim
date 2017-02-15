@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<artifact name="pattern_matchin_stream" version="1.0.0" type="analytics/eventstore" serverRole="DataAnalyticsServer">
+<artifact name="pattern_matchin_stream_store" version="1.0.0" type="analytics/eventstore" serverRole="DataAnalyticsServer">
     <file>pattern_matchin_stream.xml</file>
 </artifact>
