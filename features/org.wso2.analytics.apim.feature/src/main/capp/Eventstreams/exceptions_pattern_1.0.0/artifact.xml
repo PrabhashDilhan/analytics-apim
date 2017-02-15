@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<artifact name="Eventstream_executionTime" version="1.0.0" type="event/stream" serverRole="DataAnalyticsServer">
+<artifact name="exceptions_pattern" version="1.0.0" type="event/stream" serverRole="DataAnalyticsServer">
     <file>exceptions_pattern_1.0.0.json</file>
 </artifact>

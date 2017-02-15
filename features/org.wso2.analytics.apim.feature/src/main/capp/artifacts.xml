@@ -40,8 +40,8 @@
         <dependency artifact="org_wso2_loganalyzer_apim_logEventStream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="outSteams" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="pattern_matchin_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
-        <dependency artifact="exceptions_pattern" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
-        <dependency artifact="exception_message_table" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="solutions" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="exception_class_names" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="exception_message_table" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
         <dependency artifact="exceptions_pattern" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
 
